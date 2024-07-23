@@ -1,0 +1,49 @@
+body{
+    --dot-bg: #000000;
+    --dot-color: #848282;
+    --dot-size: 0.9px;
+    --dot-space: 20px;
+    background:
+      linear-gradient(90deg, var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center/ var(--dot-space) var(--dot-space),
+      linear-gradient(var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
+      var(--dot-color);
+    position: relative;
+    overflow: visible;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 162, 253, 0.145) 0%, transparent 50%);
+    animation: waveMobile 4s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes waveMobile {
+    0% {
+        transform: translate(-30%, -10%) scale(0.5);
+    }
+    50% {
+        transform: translate(-30%, -10%) scale(1.5);
+    }
+    100% {
+        transform: translate(-30%, -10%) scale(0.5);
+    }
+}
+
+@keyframes waveDesktop {
+    0% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-50%, -50%) scale(10); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+    body::before {
+        animation: waveDesktop 7s infinite linear;
+    }
+}
