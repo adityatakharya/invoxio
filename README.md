@@ -1,81 +1,90 @@
-# Turborepo starter
+# Invoxio
 
-This is an official starter Turborepo.
+Check description for description and deployement.
 
-## Using this example
+## ✨ Features
 
-Run the following command:
+- 🔄 **Real-time Messaging:** Instant communication using WebSockets.
+- 🏛️ **Public and Private Rooms:** Join public discussions or create private rooms with ease.
+- 📱 **Responsive Design:** Sleek and user-friendly interface built with Next.js, DaisyUI, and Tailwind CSS.
+- 📈 **Scalable Architecture:** Efficient message handling with Apache Kafka and Redis Pub/Sub.
+- 🔒 **Reliable Storage:** Secure message storage using PostgreSQL, managed by Prisma ORM.
+- 🚀 **Seamless Deployment:** Backend on Railway and frontend on Vercel for smooth and efficient operations.
 
-```sh
-npx create-turbo@latest
-```
+## 🛠️ Technologies Used
 
-## What's inside?
+- **Frontend:** Next.js, DaisyUI, Tailwind CSS, Custom CSS Animations
+- **Backend:** Railway, WebSockets (Socket.io), Redis Pub/Sub, PostgreSQL (Aiven), Prisma ORM, Apache Kafka
+- **Deployment:** Vercel (Frontend), Railway (Backend)
+- **Development Workflow:** TurboRepo for monorepo structure
 
-This Turborepo includes the following packages/apps:
+## 🚀 Getting Started
 
-### Apps and Packages
+To get a local copy up and running, follow these simple steps.
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### 📋 Prerequisites
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- Node.js
+- npm or yarn
+- Aiven for Caching.
+- Aiven for Kafka.
+- Aiven for PostgreSQL.
 
-### Utilities
+### ⚙️ Installation
 
-This Turborepo has some additional tools already setup for you:
+1. Clone the repo
+   ```
+   git clone https://github.com/yourusername/invoxio.git
+   ```
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+2. Install NPM packages
+    ```
+    npm install
+    ```
+    or
+    ```
+    yarn install
+    ```
 
-### Build
+3. Set up the PostgreSQL database and configure the .env file with your database credentials.
 
-To build all apps and packages, run the following command:
+### 🏃 Running the Application
 
-```
-cd my-turborepo
-pnpm build
-```
+1. Enter the required environment variables (for e.g., Kafka, Redis, PostgreSQL credentials) in a .env file.
 
-### Develop
+2. Store PostgreSQL certicficate provided by aiven as ca.pem in the apps/server/prisma directory and modify your **DATABASE_URL** with ```&sslcert=ca.pem``` at the end of it.
 
-To develop all apps and packages, run the following command:
+3. Change the Server API URL on **SocketContextProvider.tsx** at *apps/web/context* to your server's hosting address (localhost:8000, if you're running it locally)
 
-```
-cd my-turborepo
-pnpm dev
-```
+4. Run database migrations on *apps/server* folder
+    ```
+    npx prisma migrate dev
+    ```
+    and
+    ```
+    npx prisma generate
+    ```
 
-### Remote Caching
+5. Start the development server on root directory.
+    ```
+    npm run dev
+    ```
+    or
+    ```
+    yarn dev
+    ```
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+### 🌐 Deployment
+The application can be deployed using Vercel for the frontend and Railway for the backend. Ensure that all environment variables are properly configured.
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+### 🤝 Contributing
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
-```
-cd my-turborepo
-npx turbo login
-```
+### 👨🏻‍💻 Fork the Project
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+1. Create your Feature Branch **(git checkout -b feature/AmazingFeature)**
+2. Commit your Changes **(git commit -m 'Add some AmazingFeature')**
+3. Push to the Branch **(git push origin feature/AmazingFeature)**
+4. Open a Pull Request
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+Feel free to contribute and help the project grow. ❤️
