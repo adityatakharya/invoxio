@@ -51,9 +51,9 @@ export default function EnterRoom() {
         <div className="min-h-screen flex items-center justify-center title">
             <div className="max-w-md w-full p-6 rounded-lg">
                 <div className="text-center mb-8">
-                    <a href="/"><img src={logo.src} alt="Logo" className="mx-auto h-52 w-52 showontop z-50" /></a>
+                    <a href="/"><img src={logo.src} alt="Logo" className="mx-auto h-52 w-52 showontop z-50 fadeanim" /></a>
                 </div>
-                <h2 className="text-3xl font-bold mb-4 text-center text-white">Create or Join a Room</h2>
+                <h2 className="text-3xl font-bold mb-4 text-center text-white fadeanim">Create or Join a Room</h2>
                 <div className="mt-8 space-y-3 justify-content text-center">
                 <input 
                         type="text" 
@@ -64,7 +64,7 @@ export default function EnterRoom() {
                         placeholder="Enter room code" 
                         onKeyDown={(e) => {if(e.key==="Enter") {if(roomNumber!=="") handleJoinRoom()}}}
                     />
-                    <button type="button" onClick={(e) => {if(roomNumber!=="") handleJoinRoom()}} className="fill showontop z-50">{isLoading ? (<span className="loading lloading-ring loading-sm"></span>) : (<span>Enter</span>)}</button>
+                    <button type="button" onClick={(e) => {if(roomNumber!=="") handleJoinRoom()}} className="fill showontop z-50 fadeanim">{isLoading ? (<span className="loading lloading-ring loading-sm"></span>) : (<span>Enter</span>)}</button>
                     
                 </div>
                 {currentRoom && (

@@ -70,10 +70,10 @@ export default function HomePage() {
                         onMouseLeave={() => setHeaderText("Select a type")}
                     >
                         <button
-                            onClick={() => {setIsLoadingPrivateRoom(true); router.push("/chat/private")}}
+                            onClick={() => {setIsLoadingPrivateRoom(true); setTimeout(() => router.push("/chat/private"), 1000)}}
                             className="block w-full h-full py-10 px-6 text-2xl font-semibold text-white transform transition duration-300 hover:scale-105 focus:outline-none"
                         >
-                            Private Room
+                            {isLoadingPrivateRoom ? (<span className="loading loading-spinner loading-lg"></span>) : (<span>Private Room</span>)}
                         </button>
                     </div>
                 </div>

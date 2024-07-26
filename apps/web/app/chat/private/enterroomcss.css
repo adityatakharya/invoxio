@@ -135,7 +135,6 @@ animation: fadeIn 2s ease-in-out;
   position: relative;
   margin-left: 20px;
   color: rgb(214, 214, 214);
-  top: -12px;
 }
 
 .fill::after{
