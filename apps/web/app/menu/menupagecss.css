@@ -38,7 +38,7 @@ body::before {
 
 @keyframes waveDesktop {
     0% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(10); }
+    50% { transform: translate(-50%, -50%) scale(6); }
     100% { transform: translate(-50%, -50%) scale(1); }
 }
 
@@ -54,6 +54,6 @@ body::before {
 /* Desktop styles */
 @media (min-width: 1024px) {
     body::before {
-        animation: waveDesktop 7s infinite linear;
+        animation: waveDesktop 4s infinite linear;
     }
 }

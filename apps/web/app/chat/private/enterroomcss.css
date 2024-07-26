@@ -45,7 +45,7 @@ body::before {
 
 .rninput:focus {
   border-top-width: 0.2em;
-  background-color: #562e60;
+  background-color: #181818;
   color: whitesmoke;
 }
 
@@ -89,7 +89,7 @@ animation:move-twink-back 200s linear infinite;
 .clouds {
 background:transparent url(clouds.png) repeat top center;
 z-index:2;
-opacity: .26;
+opacity: .4;
 animation:move-clouds-back 200s linear infinite;
 }
 
@@ -112,6 +112,9 @@ animation: fadeIn 2s ease-in-out;
 
 .showontop{
   position: relative;
+}
+
+.fadeanim{
   animation: fadeIn 2s ease-in-out;
 }
 
@@ -128,13 +131,14 @@ animation: fadeIn 2s ease-in-out;
   font-size: 17px;
   font-weight: 100;
   letter-spacing: 1px;
-  padding: 5px 25px 5px;
+  padding: 3px 25px 3px;
   outline: 0;
   border: 1px solid rgb(181, 181, 181);
   cursor: pointer;
   position: relative;
   margin-left: 20px;
   color: rgb(214, 214, 214);
+  top: 8.7px;
 }
 
 .fill::after{
