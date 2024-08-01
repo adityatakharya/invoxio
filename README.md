@@ -35,7 +35,7 @@ To get a local copy up and running, follow these simple steps.
 
 1. Clone the repo
    ```
-   git clone https://github.com/yourusername/invoxio.git
+   git clone https://github.com/adityatakharya/invoxio.git
    ```
 
 2. Install NPM packages
