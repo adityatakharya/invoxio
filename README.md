@@ -5,6 +5,7 @@ Check description for description and deployement.
 ## ✨ Features
 
 - 🔄 **Real-time Messaging:** Instant communication using WebSockets.
+- 🌐 **Meet Strangers:** Meet new people from around the world for one-on-one in our strangers room.
 - 🏛️ **Public and Private Rooms:** Join public discussions or create private rooms with ease.
 - 📱 **Responsive Design:** Sleek and user-friendly interface built with Next.js, DaisyUI, and Tailwind CSS.
 - 📈 **Scalable Architecture:** Efficient message handling with Apache Kafka and Redis Pub/Sub.
