@@ -33,6 +33,7 @@ const sub = new Redis({
 
 class SocketService {
     private _io: Server;
+    private waitingQueue: Set<string>;
 
     constructor() {
         console.log("Initializing Socket Service...");
@@ -42,6 +43,8 @@ class SocketService {
                 origin: "*",
             }
         });
+
+        this.waitingQueue = new Set<string>();
 
         sub.subscribe("PUBLICMSG");
     }
@@ -81,24 +84,68 @@ class SocketService {
                 io.emit("event:new-socket-joined-public", usernamereceived);
             });
 
+            socket.on('event:start-chat', () => {
+                this.waitingQueue.add(socket.id);
+                this.matchUsers();
+            });
+
+            socket.on('event:stop-chat', async ({roomToStop}: {roomToStop: string}) => {
+                console.log("Stopping chat for", socket.username, " at", roomToStop);
+                this.waitingQueue.delete(socket.id);
+                this.leaveAllRooms(socket);
+                const disconnectionMessage = JSON.stringify({ type: "disconnection", message: "other user is disconnected from the room"});
+                console.log("Disconnection PUB in Progress")
+                await pub.publish(roomToStop, disconnectionMessage);
+            });
+
             socket.on('disconnect', (reason) => {
                 console.log('user disconnected:', socket.id, reason);
+                this.waitingQueue.delete(socket.id);
             });
         });
 
         sub.on("message", async (channel, message) => {
             console.log("SUB IN PROGRESS", message);
-            if (channel === "PUBLICMSG") {
-                console.log("Emitting message to Public Room...: ", message);
-                io.emit("event:sub-message-forall", message);
-                await produceMessage(message, channel);
+            const parsedMessage = JSON.parse(message);
+        
+            if (parsedMessage.type === "disconnection") {
+                console.log("User disconnected in room - ", channel, "...: ");
+                try{io.to(channel).emit("event:other-user-disconnected", message);}
+                catch(error){console.log("Error occured while emitting disconnection signal", error)}
+                sub.unsubscribe(channel);
             } else {
-                console.log("Emitting message to Private Room - ", channel,"...: ", message);
-                io.to(channel).emit("event:sub-message-forroom", message);
+                if (channel === "PUBLICMSG") {
+                    console.log("Emitting message to Public Room...: ", message);
+                    io.emit("event:sub-message-forall", message);
+                } else {
+                    console.log("Emitting message to Private Room - ", channel, "...: ", message);
+                    io.to(channel).emit("event:sub-message-forroom", message);
+                }
                 await produceMessage(message, channel);
+                console.log("Produced Message to Kafka Broker as well");
             }
+        });
+    }
 
-            console.log("Produced Message to Kafka Broker as well");
+    private matchUsers() {
+        if (this.waitingQueue.size >= 2) {
+            const [user1, user2] = Array.from(this.waitingQueue).slice(0, 2);
+            this.waitingQueue.delete(user1);
+            this.waitingQueue.delete(user2);
+
+            const room = `${user1}-${user2}`;
+            this._io.sockets.sockets.get(user1)?.join(room);
+            this._io.sockets.sockets.get(user2)?.join(room);
+
+            sub.subscribe(room);
+            this._io.to(room).emit('event:chat-started', { room });
+        }
+    }
+
+    private leaveAllRooms(socket: CustomSocket) {
+        const rooms = Array.from(socket.rooms).slice(1); // Skip the first room as it's the socket's own room
+        rooms.forEach(room => {
+            socket.leave(room);
         });
     }
 

@@ -21,9 +21,9 @@ export default function HomePage() {
             <div className="max-w-4xl mx-auto space-y-6">
                 <h1 className="text-4xl font-bold text-white mb-6">{headerText}</h1>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div
-  className="h-[16em] w-[18em] border-2 border-[rgba(75,30,133,0.5)] rounded-[1.5em] bg-gradient-to-br from-[rgba(75,30,133,1)] to-[rgba(75,30,133,0.01)] text-white font-nunito p-[1em] flex justify-center items-left flex-col gap-[0.75em] backdrop-blur-[12px]"
->
+                <div className="h-[16em] w-[18em] border-2 border-[rgba(75,30,133,0.5)] rounded-[1.5em] bg-gradient-to-br from-[rgba(75,30,133,1)] to-[rgba(75,30,133,0.01)] text-white font-nunito p-[1em] flex justify-center items-left flex-col gap-[0.75em] backdrop-blur-[12px]"
+                      onMouseEnter={() => setHeaderText("Selecting STRANGERS ROOM...")}
+                      onMouseLeave={() => setHeaderText("Select a type")}>
   <div>
     <h1 className="text-[2em] font-medium">Meet Strangers</h1>
     <p className="text-[0.85em]">
@@ -33,8 +33,9 @@ export default function HomePage() {
 
   <button
     className="h-fit w-fit px-[1em] py-[0.25em] border-[1px] rounded-full flex justify-center items-center gap-[0.5em] overflow-hidden group hover:translate-y-[0.125em] duration-200 backdrop-blur-[12px]"
+    onClick={() => router.push("/chat/strangers")}
   >
-    <p>Coming Soon</p>
+    <p>Start Chatting</p>
     <svg
       className="w-6 h-6 group-hover:translate-x-[10%] duration-300"
       stroke="currentColor"
@@ -54,7 +55,7 @@ export default function HomePage() {
 
                     <div
                         className="relative overflow-hidden rounded-lg shadow-lg bg-gradient-to-br from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800"
-                        onMouseEnter={() => setHeaderText("Click to enter")}
+                        onMouseEnter={() => setHeaderText("Selecting PUBLIC ROOM...")}
                         onMouseLeave={() => setHeaderText("Select a type")}
                     >
                         <button
@@ -66,7 +67,7 @@ export default function HomePage() {
                     </div>
                     <div
                         className="relative overflow-hidden rounded-lg shadow-lg bg-gradient-to-br from-green-500 to-green-700 hover:from-green-600 hover:to-green-800"
-                        onMouseEnter={() => setHeaderText("Click to enter")}
+                        onMouseEnter={() => setHeaderText("Selecting PRIVATE ROOM...")}
                         onMouseLeave={() => setHeaderText("Select a type")}
                     >
                         <button

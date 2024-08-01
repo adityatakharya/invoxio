@@ -18,6 +18,9 @@ interface ISocketContext {
     allRoomMessages: {message: string, isOwn: boolean, username: string, timestamp: string}[]
     newSocketNotiPublic: boolean;
     newSocketNotiRoom: boolean;
+    currentStrangerRoom: string | null;
+    startChat: () => void;
+    stopChat: () => void;
 }
 
 const SocketContext = React.createContext<ISocketContext | null>(null);
@@ -36,6 +39,7 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
     const [username, setUsername] = useState("");
     const [newSocketNotiRoom, setNewSocketNotiRoom] = useState(false);
     const [newSocketNotiPublic, setNewSocketNotiPublic] = useState(false);
+    const [currentStrangerRoom, setCurrentStrangerRoom] = useState<string|null>(null);
 
     const sendMessage: ISocketContext["sendMessage"] = useCallback((msg: string) => {
         console.log("Sending Message: ", msg);
@@ -111,8 +115,34 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
         return () => clearTimeout(timerId);
     }, []);
 
+    const startChat = useCallback(() => {
+        if (socket) {
+            socket.emit('event:start-chat');
+        }
+    }, [socket]);
+
+    const onChatStop = useCallback(() => {
+        setCurrentStrangerRoom("stopped");
+        console.log("Inside automated (stop for other user)");
+        setTimeout(() => stopChat(), 200)
+    }, [socket]);
+
+    const stopChat = useCallback(() => {
+        const roomToStop = currentStrangerRoom;
+        socket?.emit('event:stop-chat', {roomToStop});
+        console.log("Emitted Stop Chat Now for Room ", currentStrangerRoom)
+        setAllRoomMessages([]);
+        setAllPublicMessages([]);
+        setCurrentStrangerRoom(null);
+    }, [socket, currentStrangerRoom, onChatStop]);
+
+    const onChatStart = useCallback(({room}: {room: string})=> {
+        setCurrentStrangerRoom(room);
+        console.log("Connected to: ", currentStrangerRoom);
+    },[socket, currentStrangerRoom])
+
     useEffect(() => {
-        const _socket = io("https://invoxio-deploy-production.up.railway.app", {
+        const _socket = io("http://localhost:8000/", {
             reconnection: true,
             reconnectionAttempts: Infinity,
             reconnectionDelay: 1000,
@@ -123,6 +153,8 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
         socketRef.current.on("event:sub-message-forroom", onRoomMessageReceived);
         socketRef.current.on("event:new-socket-joined-room", onNewSocketJoinRoom);
         socketRef.current.on("event:new-socket-joined-public", onNewSocketJoinPublic);
+        socketRef.current.on("event:chat-started", onChatStart);
+        socketRef.current.on("event:other-user-disconnected", onChatStop);
         
 
         return () => {
@@ -132,7 +164,7 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
     }, [])
 
     return (
-        <SocketContext.Provider value={{ sendMessage, joinRoom, sendRoomMessage, allPublicMessages, allRoomMessages, username, setUsernameFunc, newSocketNotiRoom, newSocketNotiPublic }}>
+        <SocketContext.Provider value={{ sendMessage, joinRoom, sendRoomMessage, allPublicMessages, allRoomMessages, username, setUsernameFunc, newSocketNotiRoom, newSocketNotiPublic, currentStrangerRoom, startChat, stopChat }}>
             {children}
         </SocketContext.Provider>
     )
