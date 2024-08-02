@@ -73,6 +73,7 @@ export default function MeetStrangersRoom({ params }: { params: { roomnumber: st
 
     const handleStopChat = () => {
       setChatIsStopped(true);
+      setUserDisconnected(true);
       stopChat();
     }
 
