@@ -55,7 +55,7 @@ export default function EnterRoom() {
                 </div>
                 <h2 className="text-3xl font-bold mb-4 text-center text-white fadeanim">Create or Join a Room</h2>
                 <div className="mt-8 space-y-3 justify-content text-center">
-                <input 
+                {isLoading ? (<span className="loading loading-bars loading-lg"></span>) : (<input 
                         type="text" 
                         name="text" 
                         className="rninput z-50" 
@@ -63,7 +63,8 @@ export default function EnterRoom() {
                         value={roomNumber}
                         placeholder="Enter room code" 
                         onKeyDown={(e) => {if(e.key==="Enter") {if(roomNumber!=="") handleJoinRoom()}}}
-                    />
+                    />)
+                }
                     
                 </div>
                 {currentRoom && (
