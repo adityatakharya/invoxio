@@ -1,124 +1,103 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import { useSocket } from "../../../../context/SocketContextProvider";
 import { useRouter } from "next/navigation";
-import logo from "../../../../public/Purple_logo.png"
+import { MessageInput } from "../../../_components/MessageInput";
+import { SuccessToast, InfoToast } from "../../../_components/ChatToasts";
+import ChatScreenHeader from "../../../_components/ChatScreenHeader";
+import ChatMessage from "../../../_components/ChatBubble";
+import ContextMenu from "../../../_components/ContextMenu";
+import { useContextMenu } from "../../../hooks/useContextMenu";
+import useEnsureUser from "../../../hooks/useEnsureUser";
+import usePreventBackNavigation from "../../../hooks/usePreventBackNavigation";
+
 export default function PersonalRoomChat({ params }: { params: { roomnumber: string } }) {
-    const router = useRouter();
-    const { sendRoomMessage, allRoomMessages, username, newSocketNotiRoom } = useSocket();
-    const scrollToBottomRef = useRef<HTMLDivElement | null>(null);
-    const [showToast, setShowToast] = useState(false);
 
-    useEffect(() => {
-      if(scrollToBottomRef.current){
-        scrollToBottomRef.current.scrollIntoView({ behavior: "smooth" });
-      }
-    }, [allRoomMessages])
+  // Initialize router and socket context
+  const router = useRouter();
+  const { sendRoomMessage, allRoomMessages, username, newSocketNotiRoom } = useSocket();
 
-    useEffect(() => {
-        if (username === "") {
-            window.location.replace("/");
-        }
+  // State to manage message input and notifications
+  const [message, setMessage] = useState('');
+  const currentRoom = params.roomnumber; // Current room number from params
+  const [newUserToast, setNewUserToast] = useState(false); // State for new user notification
+  const [sentiment, setSentiment] = useState<string>(""); // State for sentiment message
+  const [sentimentToast, setSentimentToast] = useState(false); // State for sentiment toast visibility
 
-        const handlePopState = () => {
-            window.location.replace("/");
-        };
+  // Reference to manage scrolling to the bottom
+  const scrollToBottomRef = useRef<HTMLDivElement | null>(null);
 
-        // Add a state to the history stack
-        history.pushState(null, window.location.href);
-        window.addEventListener("popstate", handlePopState);
+  // Context menu state and handlers
+  const { contextMenu, handleContextMenu, handleTouchStart, closeContextMenu } = useContextMenu();
 
-        return () => {
-            window.removeEventListener("popstate", handlePopState);
-        };
-    }, [username]);
+  // Custom Hooks
+  useEnsureUser(username); // Ensure the user is logged in
+  usePreventBackNavigation(); // Prevent navigating back to avoid joining multiple rooms
 
-    useEffect(() => {
-      if (newSocketNotiRoom) {
-          setShowToast(true);
-          const timer = setTimeout(() => {
-              setShowToast(false);
-          }, 3000); // Match this with the timeout in your socket context
-          return () => clearTimeout(timer);
-      }
+  // Effect to handle new user notifications
+  useEffect(() => {
+    if (newSocketNotiRoom) {
+      setNewUserToast(true);
+      const timer = setTimeout(() => {
+          setNewUserToast(false);
+      }, 3000); // Show toast for 3 seconds
+      return () => clearTimeout(timer);
+    }
   }, [newSocketNotiRoom]);
 
-    const [message, setMessage] = useState('');
-    const currentRoom = params.roomnumber;
+  // Function to handle sending a message
+  const handleSendMessage = async () => {
+    sendRoomMessage(currentRoom, message); // Send message to the current room
+    setMessage(''); // Clear message input
+  };
 
-    const handleSendMessage = () => {
-        sendRoomMessage(currentRoom, message);
-        setMessage('');
-    };
+  // Effect to scroll to the bottom of the chat when new messages arrive
+  useEffect(() => {
+    if (scrollToBottomRef.current) {
+        scrollToBottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [allRoomMessages]);
 
-    const getCurrentTime = (dateobj: any) => {
-        const hour = dateobj.getHours();
-        const minute = dateobj.getMinutes();
-        return `${hour}:${minute < 10 ? '0' : ''}${minute}`;
-      };
-
-    return (
-        <>
-            <div className="min-h-screen flex flex-col bg-black">
-              <div className="border-b border-gray-700 bg-black text-white p-4 sticky top-0 z-10 flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Private Room</h1>
-            <a href="/">
-                <img src={logo.src} alt="Purple Logo" className="h-14"/>
-            </a>
+  return (
+    <>
+      <div className="min-h-screen flex flex-col bg-black">
+        <ChatScreenHeader headingText="Private Room" />
+        
+        {/* Display success toast for new user and sentiment */}
+        <SuccessToast notiText="New user joined the chat!" show={newUserToast} />
+        <SuccessToast notiText={sentiment} show={sentimentToast} />
+        
+        {/* Chat messages container */}
+        <div className="flex-1 p-4 no-scrollbar overflow-y-auto">
+          {allRoomMessages.map((msg, index) => (
+              <ChatMessage
+                  key={index}
+                  message={msg}
+                  isOwn={msg.isOwn}
+                  timestamp={msg.timestamp}
+                  onContextMenu={handleContextMenu}
+                  onTouchStart={handleTouchStart}
+              />
+          ))}
+          <div ref={scrollToBottomRef}></div> {/* Reference for scrolling to bottom */}
         </div>
-        {showToast && (
-            <div className="toast toast-start z-20 top-24 left-0">
-                <div className="alert alert-success">
-                    <span>New user joined the chat!</span>
-                </div>
-            </div>
-        )}
-      <div className="flex-1 p-4 no-scrollbar overflow-y-auto">
-        {allRoomMessages.map((each, index) => (
-          each.isOwn ? (
-            <div key={index} className="chat chat-end mb-4">
-              <div className="chat-header text-sm opacity-50 text-gray-100 pr-2 mb-1">
-                You
-                <time className="text-xs opacity-50 ml-1">{getCurrentTime(new Date(each.timestamp))}</time>
-              </div>
-              <div className="chat-bubble bg-gray-800 text-blue-300">{each.message}</div>
-            </div>
-          ) : (
-            <div key={index} className="chat chat-start mb-4">
-              <div className="chat-image avatar">
-                <div className="w-10 rounded-full">
-                  <img
-                    alt="User avatar"
-                    src="https://i.pinimg.com/originals/ed/63/5c/ed635c29fffe09d3c1f706ca2cc6e404.jpg" />
-                </div>
-              </div>
-              <div className="chat-header text-sm opacity-50 text-gray-100 pl-2 mb-1">
-                {each.username}
-                <time className="text-xs opacity-50 ml-1">{getCurrentTime(new Date(each.timestamp))}</time>
-              </div>
-              <div className="chat-bubble text-green-300">{each.message}</div>
-            </div>
-          )
-        ))}
-        <div ref={scrollToBottomRef}></div>
-      </div>
-      <div className="p-4 bg-black border-t border-gray-800 flex sticky bottom-0 z-50">
-        <input
-          type="text"
-          className="input input-bordered bg-gray-800 flex-1 mr-2 text-gray-400"
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type message"
-          value={message}
-          onKeyDown={(e) => {if(e.key==="Enter") handleSendMessage()}}
+        
+        {/* Input field for sending messages */}
+        <MessageInput
+          message={message}
+          setMessage={setMessage}
+          handleSendMessage={handleSendMessage}
         />
-        <button 
-          className="btn btn-primary"
-          onClick={handleSendMessage}>
-          Send
-        </button>
+        
+        {/* Context menu for additional options */}
+        <ContextMenu
+          contextMenu={contextMenu}
+          closeContextMenu={closeContextMenu}
+          setSentiment={setSentiment} // Update sentiment state
+          setSentimentToast={setSentimentToast} // Update sentiment toast visibility
+        />
       </div>
-    </div>
-        </>
-    );
+    </>
+  );
 }

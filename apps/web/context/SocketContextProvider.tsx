@@ -10,7 +10,7 @@ interface SocketContextProviderProps {
 
 interface ISocketContext {
     username: string
-    sendMessage: (msg: string) => any
+    sendPublicMessage: (msg: string) => any
     joinRoom: (roomNumber: string) => void
     sendRoomMessage: (roomNumber: string, msg: string) => any
     setUsernameFunc: (username: string) => void
@@ -41,8 +41,7 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
     const [newSocketNotiPublic, setNewSocketNotiPublic] = useState(false);
     const [currentStrangerRoom, setCurrentStrangerRoom] = useState<string|null>(null);
 
-    const sendMessage: ISocketContext["sendMessage"] = useCallback((msg: string) => {
-        console.log("Sending Message: ", msg);
+    const sendPublicMessage: ISocketContext["sendPublicMessage"] = useCallback((msg: string) => {
         if (socket) {
             socket.emit('event:test-message', { message: msg })
         }
@@ -62,7 +61,6 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
 
     const onPublicMessageReceived = useCallback((msg: string) => {
         try {
-            console.log("Public Message Recived");
             const { message, senderId, username, timestamp } = JSON.parse(msg) as { message: string, senderId: string, username: string, timestamp: string};
             const isOwn = senderId === socketRef.current?.id;
             setAllPublicMessages(prev => [...prev, {message, isOwn, username, timestamp}])
@@ -74,7 +72,6 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
 
     const onRoomMessageReceived = useCallback((msg: string) => {
         try {
-            console.log("Room Message Recived");
             const { message, senderId, username, timestamp } = JSON.parse(msg) as { message: string, senderId: string, username: string, timestamp: string };
             const isOwn = senderId === socketRef.current?.id;
             setAllRoomMessages(prev => [...prev, {message, isOwn, username, timestamp}]);
@@ -95,7 +92,6 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
 
     const onNewSocketJoinRoom = useCallback(() => {
         setNewSocketNotiRoom(true);
-        console.log("new user noti function working");
         
         const timerId = setTimeout(() => {
             setNewSocketNotiRoom(false);
@@ -106,7 +102,6 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
 
     const onNewSocketJoinPublic = useCallback(() => {
         setNewSocketNotiPublic(true);
-        console.log("new user noti function working");
         
         const timerId = setTimeout(() => {
             setNewSocketNotiPublic(false);
@@ -123,14 +118,12 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
 
     const onChatStop = useCallback(() => {
         setCurrentStrangerRoom("stopped");
-        console.log("Inside automated (stop for other user)");
         setTimeout(() => stopChat(), 200)
     }, [socket]);
 
     const stopChat = useCallback(() => {
         const roomToStop = currentStrangerRoom;
         socket?.emit('event:stop-chat', {roomToStop});
-        console.log("Emitted Stop Chat Now for Room ", currentStrangerRoom)
         setAllRoomMessages([]);
         setAllPublicMessages([]);
         setCurrentStrangerRoom(null);
@@ -138,11 +131,10 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
 
     const onChatStart = useCallback(({room}: {room: string})=> {
         setCurrentStrangerRoom(room);
-        console.log("Connected to: ", currentStrangerRoom);
     },[socket, currentStrangerRoom])
 
     useEffect(() => {
-        const _socket = io("http://localhost:8000/", {
+        const _socket = io("https://invoxio-deploy-production.up.railway.app/", {
             reconnection: true,
             reconnectionAttempts: Infinity,
             reconnectionDelay: 1000,
@@ -164,7 +156,7 @@ export const SocketContextProvider: React.FC<SocketContextProviderProps> = ({ ch
     }, [])
 
     return (
-        <SocketContext.Provider value={{ sendMessage, joinRoom, sendRoomMessage, allPublicMessages, allRoomMessages, username, setUsernameFunc, newSocketNotiRoom, newSocketNotiPublic, currentStrangerRoom, startChat, stopChat }}>
+        <SocketContext.Provider value={{ sendPublicMessage, joinRoom, sendRoomMessage, allPublicMessages, allRoomMessages, username, setUsernameFunc, newSocketNotiRoom, newSocketNotiPublic, currentStrangerRoom, startChat, stopChat }}>
             {children}
         </SocketContext.Provider>
     )

@@ -27,7 +27,6 @@ out/
 build
 dist
 
-
 # Debug
 npm-debug.log*
 yarn-debug.log*
@@ -37,3 +36,88 @@ yarn-error.log*
 *.pem
 .DS_Store
 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# Virtual Environment
+.venv/
+env/
+venv/
+myenv/
+myvenv/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Logs
+logs/
+*.log
+
+# Python packages
+*.egg
+*.egg-info
+dist
+build
+*.dist-info
+pip-wheel-metadata
+
+# Unit test / coverage reports
+.coverage
+*.cover
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environments
+.env
+
+# Package files
+*.lock
+poetry.lock
+.pdm.toml
+.pdm.lock
+__pypackages__/
+
+# Static analysis
+mypy_cache/
+.dmypy.json
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Django stuff
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff
+instance/
+.webassets-cache
+
+# Scrapy stuff
+.scrapy
+
+# PyBuilder
+target/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
