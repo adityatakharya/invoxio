@@ -1,6 +1,6 @@
 export async function analyzeSentiment(text: string){
   try {
-    const response = await fetch('http://127.0.0.1:8001/analyze_sentiment', {
+    const response = await fetch('https://invoxio-sentiment-analyzer.onrender.com/analyze_sentiment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

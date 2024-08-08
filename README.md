@@ -2,6 +2,9 @@
 
 Check description for description and deployement.
 
+## Update: Sentiment Analysis Feature
+Integrated a sentiment analysis feature into the chat room using a Python FastAPI API and NLTK. This feature analyzes user messages in real-time, providing instant feedback on the sentiment (positive, negative, or neutral), enhancing the chat experience with AI-driven insights. Tap and hold any chat message to use it.
+
 ## ✨ Features
 
 - 🔄 **Real-time Messaging:** Instant communication using WebSockets.
@@ -55,7 +58,9 @@ To get a local copy up and running, follow these simple steps.
 
 2. Store PostgreSQL certicficate provided by aiven as ca.pem in the apps/server/prisma directory and modify your **DATABASE_URL** with ```&sslcert=ca.pem``` at the end of it.
 
-3. Change the Server API URL on **SocketContextProvider.tsx** at *apps/web/context* to your server's hosting address (localhost:8000, if you're running it locally)
+3. Change the Server API URL on **SocketContextProvider.tsx** located at *apps/web/context* to your server's hosting address (localhost:8000, if you're running it locally)
+
+4. Change the Server API URL on **analyzeSentiment.ts** located at *apps/web/_api* to to your server's hosting address (127.0.0.1:8001/analyze_sentiment, if you're running it locally)
 
 4. Run database migrations on *apps/server* folder
     ```
