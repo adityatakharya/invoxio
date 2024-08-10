@@ -5,6 +5,7 @@ import { useSocket } from "../context/SocketContextProvider";
 import { useRouter } from "next/navigation";
 import "./homepagecss.css";
 import logo from "../public/Purple_logo.png";
+import NewFeaturePopup from "./_components/NewFeaturePopup";
 
 export default function EntryPage() {
     // Destructure setUsernameFunc from Socket context
@@ -14,6 +15,7 @@ export default function EntryPage() {
     const [typedUsername, setTypedUsername] = useState("");
     const [invalidUsernameErr, setInvalidUsernameError] = useState(false);
     const [isNavbarOpen, setIsNavbarOpen] = useState(false);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
     
     // Router instance from Next.js to handle navigation
     const router = useRouter();
@@ -116,9 +118,14 @@ export default function EntryPage() {
                                     Enter
                                 </button>
                             </div>
+                            <span className="text-xs text-gray-500 p-4">
+                                New feature added: Sentiment Analysis. <u onClick={() => setIsPopupOpen(true)} className="cursor-pointer">Here's how to use</u>
+                            </span>
                         </div>
                     </div>
                 </div>
+                {/* Popup for new feature announcements */}
+                {isPopupOpen && <NewFeaturePopup closePopup={() => setIsPopupOpen(false)} />}
             </body>
         </>
     );
